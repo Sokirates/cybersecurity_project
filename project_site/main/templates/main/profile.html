@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h2>User Profile</h2>
+
+<h3>Welcome, {{ user.username }}!</h3>
+<p><b>Username:</b> {{ user.username }}</p>
+<p><b>Joined:</b> {{ user.date_joined|date:"d.m.Y H:i" }}</p>
+<p><b>Last login:</b> {{ user.last_login|date:"d.m.Y H:i" }}</p>
+
+<h3>Actions</h3>
+<p>This is a simple profile page. Here you can see your user information.</p>
+
+<!-- A02:2021 - CRYPTOGRAPHIC FAILURES: Exposing sensitive user data without encryption-->
+
+<script>
+console.log("Password Hash: {{ user_data.password }}");
+console.log("Session Key: {{ user_data.session_key }}");
+console.log("User ID: {{ user_data.user_id }}");
+</script>
+<!-- flaw-5 fix, remove sensitive data exposure -->
+<p>
+    <a href="{% url 'home' %}">Back to home</a> |
+    <a href="{% url 'logout' %}">Logout</a>
+</p>
+{% endblock %}

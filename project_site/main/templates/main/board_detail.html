@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>{{ board.title }}</h1>
+<p>Created by {{ board.created_by.username }} on {{ board.created_at|date:"d.m.Y H:i" }}</p>
+
+<p><a href="{% url 'home' %}">← Back to Home</a></p>
+
+<hr>
+
+<h2>Post a Message</h2>
+<form method="post">
+    {% csrf_token %}
+    <p>
+        <label for="content">Your message:</label><br>
+        <textarea name="content" id="content" rows="4" cols="50" required></textarea>
+    </p>
+    <p>
+        <button type="submit">Post Message</button>
+    </p>
+</form>
+
+<hr>
+
+<h2>Messages ({{ board_messages.count }})</h2>
+
+{% if board_messages %}
+    {% for message in board_messages %}
+        <div>
+            <p><b>{{ message.author.username }}</b> - {{ message.created_at|date:"d.m.Y H:i" }}</p>
+            <p>{{ message.content }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No messages yet. Be the first to post!</p>
+{% endif %}
+
+{% endblock %}

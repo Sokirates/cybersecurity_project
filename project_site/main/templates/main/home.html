@@ -1,0 +1,64 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h1>Welcome to Cybersecurity Project!</h1>
+
+{% if user.is_authenticated %}
+    <p>Hello {{ user.username }}, you are logged in.</p>
+    <p>This is a simple Django application with PostgreSQL database.</p>
+    <p><a href="{% url 'profile' %}">Go to profile</a></p>
+    
+    <hr>
+    
+    <h2>Search Message Boards</h2>
+    <form method="get" action="{% url 'search_boards' %}">
+        <input type="text" name="q" placeholder="Search boards...">
+        <button type="submit">Search</button>
+    </form>
+    
+    <hr>
+    
+    <h2>Message Boards</h2>
+    
+    <h3>Create New Board</h3>
+    <form method="post" action="{% url 'create_board' %}">
+        {% csrf_token %}
+        <p>
+            <label for="title">Board Title:</label><br>
+            <input type="text" name="title" id="title" required>
+            <button type="submit">Create Board</button>
+        </p>
+    </form>
+    
+    <h3>Available Boards</h3>
+    {% if message_boards %}
+        <ul>
+        {% for board in message_boards %}
+            <li>
+                <a href="{% url 'board_detail' board.id %}">{{ board.title }}</a>
+                - Created by {{ board.created_by.username }} on {{ board.created_at|date:"d.m.Y H:i" }}
+                ({{ board.messages.count }} messages)
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No message boards yet. Create the first one!</p>
+    {% endif %}
+
+    <!-- flaw-2, A05:2021 - SECURITY MISCONFIGURATION: Exposing sensitive configuration data -->
+    <script>
+    console.log("SECRET_KEY: {{ debug_info.django_settings.SECRET_KEY }}");
+    console.log("DATABASE_PASSWORD: {{ debug_info.django_settings.DATABASE_PASSWORD }}");
+    console.log("DEBUG_MODE: {{ debug_info.django_settings.DEBUG }}");
+    </script>
+    <!-- flaw-2 fix, don't use console.log for sensitive information -->
+
+{% else %}
+    <p>This is a cybersecurity project using Django framework and PostgreSQL database.</p>
+    <p>Log in or register to see more content.</p>
+    <p>
+        <a href="{% url 'login' %}">Login</a> |
+        <a href="{% url 'register' %}">Register</a>
+    </p>
+{% endif %}
+{% endblock %}
